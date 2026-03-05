@@ -6,7 +6,7 @@
 
     <groupId>com.github.julyss2019.bukkit.plugins</groupId>
     <artifactId>JulyLibrary</artifactId>
-    <version>2.6.0</version>
+    <version>3.0.0</version>
 
     <properties>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>

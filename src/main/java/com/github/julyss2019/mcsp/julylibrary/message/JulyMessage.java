@@ -1,8 +1,6 @@
 package com.github.julyss2019.mcsp.julylibrary.message;
 
 import com.github.julyss2019.mcsp.julylibrary.utilv2.PlayerUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentSerializer;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
@@ -21,18 +18,6 @@ import java.util.List;
 public class JulyMessage {
     private static final boolean TITLE_ENABLED = true;
     private static final boolean RAW_MESSAGE_ENABLED = true;
-
-    public static void broadcastRawMessage(@NotNull String json) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            sendRawMessage(player, json);
-        }
-    }
-
-    public static void sendRawMessage(@NotNull Player player, @NotNull String json) {
-        BaseComponent[] components = ComponentSerializer.parse(json);
-        player.spigot().sendMessage(components);
-    }
-
     @Deprecated
     public static List<String> toColoredMessages(@NotNull List<String> messages) {
         List<String> result = new ArrayList<>();
@@ -129,10 +114,6 @@ public class JulyMessage {
                 break;
             case SUBTITLE:
                 player.sendTitle("", title.getText(), title.getFadeIn(), title.getStay(), title.getFadeOut());
-                break;
-            case ACTIONBAR:
-                player.sendActionBar(Component.text(title.getText()));
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(title.getText()));
                 break;
             default:
                 throw new RuntimeException("未知 Title 类型: " + title.getTitleType());
