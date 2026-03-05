@@ -3,6 +3,7 @@ package com.github.julyss2019.mcsp.julylibrary.utils;
 import com.github.julyss2019.mcsp.julylibrary.item.ItemBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,10 @@ public class ItemUtil {
      */
     public static String getId(@NotNull ItemStack itemStack) {
         int id = getTypeId(itemStack);
-        short data = itemStack.getDurability();
+        short data = 0;
+        if (itemStack.getItemMeta() instanceof Damageable) {
+            data = (short) ((Damageable) itemStack.getItemMeta()).getDamage();
+        }
 
         return id + (data == 0 ? "" : ":" + data);
     }
@@ -241,7 +245,9 @@ public class ItemUtil {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemBuilder.material(itemStack.getType());
-        itemBuilder.data(itemStack.getDurability());
+        if (itemMeta instanceof Damageable) {
+            itemBuilder.data((short) ((Damageable) itemMeta).getDamage());
+        }
         itemBuilder.displayName(itemMeta.getDisplayName());
         itemBuilder.lores(itemMeta.getLore());
         return itemBuilder;
