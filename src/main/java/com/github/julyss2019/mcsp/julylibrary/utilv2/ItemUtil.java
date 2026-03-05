@@ -1,6 +1,7 @@
 package com.github.julyss2019.mcsp.julylibrary.utilv2;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,10 @@ public class ItemUtil {
      */
     public static String getId(@NotNull ItemStack itemStack) {
         int id = getTypeId(itemStack);
-        short data = itemStack.getDurability();
+        short data = 0;
+        if (itemStack.getItemMeta() instanceof Damageable) {
+            data = (short) ((Damageable) itemStack.getItemMeta()).getDamage();
+        }
 
         return id + (data == 0 ? "" : ":" + data);
     }

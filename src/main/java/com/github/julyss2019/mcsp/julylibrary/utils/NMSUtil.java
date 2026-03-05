@@ -2,39 +2,45 @@ package com.github.julyss2019.mcsp.julylibrary.utils;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-/*
-NMS 版本对应表：
-1.7.2 = 1_7_R1
-1.7.5 = 1_7_R2
-1.7.8 = 1_7_R3
-1.7.10 = 1_7_R4
-1.8 = 1_8_R1
-1.8.3 = 1_8_R2
-1.8.8 = 1_8_R3
-1.9.2 = 1_9_R1
-1.9.4 = 1_9_R2
-1.10.2 = 1_10_R1
-1.11.2 = 1_11_R1
 
-https://www.spigotmc.org/wiki/spigot-nms-and-minecraft-versions/
- */
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Deprecated
 public class NMSUtil {
+    private static final Pattern BUKKIT_VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
     @Deprecated
-    public static final String SERVER_VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-    public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    public static final String SERVER_VERSION = resolveServerVersion();
+    public static final String NMS_VERSION = SERVER_VERSION;
+
+    private static String resolveServerVersion() {
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String[] split = packageName.split("\\.");
+
+        if (split.length > 3 && split[3].startsWith("v")) {
+            return split[3];
+        }
+
+        Matcher matcher = BUKKIT_VERSION_PATTERN.matcher(Bukkit.getBukkitVersion());
+        if (matcher.find()) {
+            return "v" + matcher.group(1) + "_" + matcher.group(2) + "_R1";
+        }
+
+        throw new RuntimeException("无法识别 Bukkit 版本: " + Bukkit.getBukkitVersion());
+    }
 
     /**
      * 得到NMS类
      * @param name 类名
-     * @return
      */
     public static Class<?> getNMSClass(@NotNull String name) {
-        try
-        {
+        try {
             return Class.forName("net.minecraft.server." + NMS_VERSION + "." + name);
-        } catch (Exception ignored) {}
+        } catch (ClassNotFoundException ignored) {}
+
+        try {
+            return Class.forName("net.minecraft.server." + name);
+        } catch (ClassNotFoundException ignored) {}
 
         return null;
     }

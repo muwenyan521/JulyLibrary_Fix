@@ -1,14 +1,14 @@
 package com.github.julyss2019.mcsp.julylibrary.utilv2;
 
-import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
-import com.github.julyss2019.mcsp.julylibrary.logger.LoggerManager;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NMSUtil {
-    public static final String NMS_VERSION = "v1_21_R11";
+    private static final Pattern BUKKIT_VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
+    public static final String NMS_VERSION = resolveNmsVersion();
     private static final int[] CURRENT_VERSION_NUMBER_ARRAY = getVersionNumberArray(NMS_VERSION);
 
     /**
@@ -41,16 +41,34 @@ public class NMSUtil {
         return new int[] {Integer.parseInt(versionStrArray[0].substring(1)), Integer.parseInt(versionStrArray[1]), Integer.parseInt(versionStrArray[2].substring(1))};
     }
 
+    private static String resolveNmsVersion() {
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String[] parts = packageName.split("\\.");
+
+        if (parts.length > 3 && parts[3].startsWith("v")) {
+            return parts[3];
+        }
+
+        Matcher matcher = BUKKIT_VERSION_PATTERN.matcher(Bukkit.getBukkitVersion());
+        if (matcher.find()) {
+            return "v" + matcher.group(1) + "_" + matcher.group(2) + "_R1";
+        }
+
+        throw new RuntimeException("无法识别 Bukkit 版本: " + Bukkit.getBukkitVersion());
+    }
+
     /**
      * 得到NMS类
      * @param name 类名
-     * @return
      */
     public static Class<?> getNMSClass(@NotNull String name) {
-        try
-        {
+        try {
             return Class.forName("net.minecraft.server." + NMS_VERSION + "." + name);
-        } catch (Exception ignored) {}
+        } catch (ClassNotFoundException ignored) {}
+
+        try {
+            return Class.forName("net.minecraft.server." + name);
+        } catch (ClassNotFoundException ignored) {}
 
         return null;
     }
