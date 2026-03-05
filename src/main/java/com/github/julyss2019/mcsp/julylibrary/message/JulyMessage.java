@@ -131,6 +131,7 @@ public class JulyMessage {
                 player.sendTitle("", title.getText(), title.getFadeIn(), title.getStay(), title.getFadeOut());
                 break;
             case ACTIONBAR:
+                player.sendActionBar(Component.text(title.getText()));
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(title.getText()));
                 break;
             default:
