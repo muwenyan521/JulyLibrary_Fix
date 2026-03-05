@@ -5,10 +5,12 @@ import com.github.julyss2019.mcsp.julylibrary.text.JulyText;
 import com.github.julyss2019.mcsp.julylibrary.utils.NMSUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +67,9 @@ public class ItemBuilder {
     @Deprecated
     public ItemBuilder(ItemStack itemStack) {
         this.material = itemStack.getType();
-        this.durability = itemStack.getDurability();
+        if (itemStack.getItemMeta() instanceof Damageable) {
+            this.durability = (short) ((Damageable) itemStack.getItemMeta()).getDamage();
+        }
         this.amount = itemStack.getAmount();
         this.displayName = itemStack.getItemMeta().getDisplayName();
 
@@ -367,13 +371,16 @@ public class ItemBuilder {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemStack.setAmount(this.amount);
-        itemStack.setDurability(this.durability);
+
+        if (itemMeta instanceof Damageable) {
+            ((Damageable) itemMeta).setDamage(this.durability);
+        }
 
         if (itemMeta instanceof SkullMeta) {
             SkullMeta skullMeta = (SkullMeta) itemMeta;
 
             if (skullOwner != null) {
-                skullMeta.setOwner(skullOwner);
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(skullOwner));
             }
 
             if (skullTexture != null) {
