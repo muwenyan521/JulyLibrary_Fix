@@ -9,6 +9,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentSerializer;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +29,8 @@ public class JulyMessage {
     }
 
     public static void sendRawMessage(@NotNull Player player, @NotNull String json) {
-        player.sendMessage(GsonComponentSerializer.gson().deserialize(json));
+        BaseComponent[] components = ComponentSerializer.parse(json);
+        player.spigot().sendMessage(components);
     }
 
     @Deprecated
@@ -126,6 +132,7 @@ public class JulyMessage {
                 break;
             case ACTIONBAR:
                 player.sendActionBar(Component.text(title.getText()));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(title.getText()));
                 break;
             default:
                 throw new RuntimeException("未知 Title 类型: " + title.getTitleType());
