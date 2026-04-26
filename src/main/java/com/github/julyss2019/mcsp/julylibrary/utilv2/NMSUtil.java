@@ -63,7 +63,7 @@ public final class NMSUtil {
 
     private static final int MAX_R_PROBE = 20;
 
-\
+
     public static final String NMS_VERSION;
     private static final int[] CURRENT_VER_ARRAY;
 
@@ -224,6 +224,8 @@ public final class NMSUtil {
                 return highest;
             }
         } catch (Exception ignored) {
+
+        }
             
         return null;
     }
